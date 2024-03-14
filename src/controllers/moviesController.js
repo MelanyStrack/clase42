@@ -63,9 +63,17 @@ const moviesController = {
         console.log(searchDb);
         if (!searchDb[0]) {
             const moviesApi= await fetch(`http://www.omdbapi.com/?apikey=fa7e66e0&t=${req.body.titulo}`).then(resp=>{
-                console.log("response",resp.url);
-                const response = resp.url
-            res.redirect(response)
+                resp.json().then(data=>{
+                    console.log("data", data);
+                    const movie ={
+                        title: data.Title,
+                        rating: data.imdbRating,
+                        awards: data.Metascore,
+                        length: data.Runtime,
+                        release_date: data.Released,
+                    }
+                    res.render("moviesDetail.ejs", {movie:movie})
+                })
             })
         }else {
             res.redirect(`/movies/detail/${searchDb[0].dataValues.id}`)
